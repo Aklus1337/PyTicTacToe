@@ -1,0 +1,137 @@
+import pygame
+
+
+
+pygame.init()
+
+size = (700,700)
+screen=pygame.display.set_mode(size)
+pygame.display.set_caption("Scooby doo")
+
+done = False
+BLACK = (0, 0 , 0)
+WHITE = (255,255,255)
+YELLOW = (255,255,0)
+clock= pygame.time.Clock()
+reset_button = False
+grid=[]
+playerchar = 1
+font = pygame.font.SysFont('Calibri',25,True,False ) 
+
+
+def change_player(playerchar):
+       if playerchar == 1:
+              playerchar = 2
+              return playerchar
+       if playerchar == 2:
+              playerchar = 1
+              return playerchar
+       
+def draw_map():
+       for i in range (0,3):
+              pygame.draw.rect(screen, BLACK, [100,100+(i*100),100,100],2)
+              for j in range(0,3):
+                     pygame.draw.rect(screen, BLACK, [100+(j*100),100,100,100],2)
+                     for k in range(0,3):
+                            pygame.draw.rect(screen, BLACK, [100+(k*100),200,100,100],2)
+                            for n in range(0,3):
+                                   pygame.draw.rect(screen, BLACK, [100+(n*100),300,100,100],2)          
+for i in range(0,3):
+       for j in range(0,3):
+              grid.append([])
+              grid[i].append(0)
+       
+                     
+                     
+def isBoardFull(grid):
+       return False
+def draw_grid():
+       for i in range(0,3):
+              for j in range(0,3):
+                     if grid[i][j] == 1:
+                            pygame.draw.line(screen, BLACK, [100+(i*100),100+(j*100)],[200+(i*100),200+(j*100)], 4)
+                            pygame.draw.line(screen, BLACK, [100+(i*100),200+(j*100)],[200+(i*100),100+(j*100)], 4)
+                     if grid[i][j] == 2:
+                            pygame.draw.ellipse(screen, BLACK, [100+(i*100),100+(j*100),100,100], 4)
+def isWinner(bo, le):
+    # Given a board and a player's letter, this function returns True if that player has won.
+    # We use bo instead of board and le instead of letter so we don't have to type as much.
+       return((bo[0][0] == le and bo[1][0] == le and bo[2][0] == le) or # across the top CHECKED
+               (bo[0][1] == le and bo[1][1] == le and bo[2][1] == le) or # across the middle CHECKED
+               (bo[0][2] == le and bo[1][2] == le and bo[2][2] == le) or # across the bottom CHECKED
+               (bo[0][0] == le and bo[0][1] == le and bo[0][2] == le) or # down the left side
+               (bo[1][0] == le and bo[1][1] == le and bo[1][2] == le) or # down the middle
+               (bo[2][0] == le and bo[2][1] == le and bo[2][2] == le) or # down the right side
+               (bo[0][0] == le and bo[1][1] == le and bo[2][2] == le) or # diagonal
+               (bo[2][0] == le and bo[1][1] == le and bo[0][2] == le)) # diagonal
+
+              
+def make_move():
+       if event.type== pygame.KEYDOWN:
+              if event.key == pygame.K_KP1 and grid[0][2] == 0:
+                                   grid[0][2]= playerchar
+                                   return True
+              if event.key == pygame.K_KP2 and grid[1][2] ==0:
+                                   grid[1][2]= playerchar
+                                   return True
+              if event.key == pygame.K_KP3 and grid[2][2] == 0:
+                                   grid[2][2]= playerchar
+                                   return True
+              if event.key == pygame.K_KP4 and grid[0][1] ==0:
+                                   grid[0][1]= playerchar
+                                   return True
+              if event.key == pygame.K_KP5 and grid[1][1] == 0:
+                                   grid[1][1]= playerchar
+                                   return True
+              if event.key == pygame.K_KP6 and grid[2][1] ==0:
+                                   grid[2][1]= playerchar
+                                   return True
+              if event.key == pygame.K_KP7 and grid[0][0] == 0:
+                                   grid[0][0]= playerchar
+                                   return True
+              if event.key == pygame.K_KP8 and grid[1][0] ==0:
+                                   grid[1][0]= playerchar
+                                   return True
+              if event.key == pygame.K_KP9 and grid[2][0] == 0:
+                                   grid[2][0] = playerchar
+                                   return True
+              
+       else:
+              pygame.event.wait
+       
+while not done:
+    #print(playerchar+"'s turn")
+       for event in pygame.event.get():
+              if event.type == pygame.QUIT:
+                     done = True
+       made_move = make_move()
+                            #pygame.event.wait
+       if playerchar == 1:
+              stringplayerchar = "X"
+       if playerchar == 2:
+              stringplayerchar = "O"
+
+       text=font.render(stringplayerchar + ' turn', True, BLACK)
+       screen.fill (WHITE)
+       screen.blit(text, [0,0])
+       text_win=font.render(stringplayerchar + ' win', True, BLACK)
+       text_tie=font.render('TIE!',True, BLACK)
+       text_reset=font.render('Reset',True,BLACK)
+       draw_map()
+       draw_grid() 
+       pygame.draw.rect(screen, YELLOW, [[470,200],[150,75]])
+       screen.blit(text_reset,[500,225])
+#TODO: MAKE RESET BUTTON WORK
+       if(isWinner(grid,playerchar)== True):
+              screen.blit(text_win,[350,500])
+       else:
+              if reset_button == True:
+                     screen.blit(text_tie,[350,500])
+              elif made_move==True:
+                     playerchar=change_player(playerchar)
+       pygame.display.flip()
+       clock.tick(60)
+    
+pygame.quit()
+    
+    
